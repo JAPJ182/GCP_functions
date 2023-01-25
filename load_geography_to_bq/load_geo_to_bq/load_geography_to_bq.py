@@ -1,9 +1,9 @@
 import warnings
 warnings.simplefilter("always")
-!pip install  pyproj
-!pip install progress
-!pip install geojson
-!pip install geopandas
+#!pip install  pyproj
+#!pip install progress
+#!pip install geojson
+#!pip install geopandas
 
 
 from google.colab import auth
@@ -25,7 +25,7 @@ os.environ['PROJECT'] = project
 from google.cloud import bigquery 
 import chardet
 import pandas as pd
-import geopandas
+#import geopandas
 import pandas_gbq as gpd
 import pprint
 import time
