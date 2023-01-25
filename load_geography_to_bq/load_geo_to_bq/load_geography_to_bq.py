@@ -1,6 +1,6 @@
-%%writefile load_geography_to_bq.py
-import warnings
-warnings.simplefilter("always")
+#%%writefile load_geography_to_bq.py
+#import warnings
+#warnings.simplefilter("always")
 #!pip install  pyproj
 #!pip install progress
 #!pip install geojson
