@@ -1,3 +1,4 @@
+%%writefile load_geography_to_bq.py
 import warnings
 warnings.simplefilter("always")
 #!pip install  pyproj
@@ -102,20 +103,20 @@ class load_to_bq:
               appended_data = []
               for i in range(len(self.txt_files) ):
                 temp_file_path = self.txt_files[i]
-                year = temp_file_path.split('/')[-1].split('_'+sector_name)[0].split('_')[-1] 
-                pollutant = temp_file_path.split('/')[-1].split('_'+sector_name)[0].split('_')[-2] 
-                #print('the sector is: {} for the year: {} and the pollutant: {}'.format(sector_name,year, pollutant ) )
+                year = temp_file_path.split('/')[-1].split('_'+self.sector_name)[0].split('_')[-1] 
+                pollutant = temp_file_path.split('/')[-1].split('_'+self.sector_name)[0].split('_')[-2] 
+                #print('the sector is: {} for the year: {} and the pollutant: {}'.format(self.sector_name,year, pollutant ) )
 
                 df = pd.read_csv(temp_file_path, sep = ';', skiprows = 3,  names= ['lat', 'lon', 'Emission' ] )
                 df['year'] = year
                 df['pollutant'] = pollutant
-                df['sector_name'] = sector_name
+                df['sector_name'] = self.sector_name
                 appended_data.append(df)
                 
               self.tabla = pd.concat(appended_data)
               # df = appended_data
               self.tabla=self.tabla.applymap(str)
-              self.tabla_in_bq = sector_name+'_'+pollutant 
+              self.tabla_in_bq = self.sector_name+'_'+pollutant 
               self.table_id_st = '{}.{}.{}'.format(project, 'STANGING',tabla_in_bq )
               self.table_id = '{}.{}.{}'.format(project, Dataset ,tabla_in_bq )
             ##################################
