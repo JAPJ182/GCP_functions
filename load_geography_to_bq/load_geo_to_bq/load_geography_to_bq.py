@@ -1,6 +1,6 @@
 #%%writefile load_geography_to_bq.py
-#import warnings
-#warnings.simplefilter("always")
+import warnings
+warnings.simplefilter("ignore")
 #!pip install  pyproj
 #!pip install progress
 #!pip install geojson
@@ -117,8 +117,8 @@ class load_to_bq:
               # df = appended_data
               self.tabla=self.tabla.applymap(str)
               self.tabla_in_bq = self.sector_name+'_'+pollutant 
-              self.table_id_st = '{}.{}.{}'.format(project, 'STANGING',tabla_in_bq )
-              self.table_id = '{}.{}.{}'.format(project, Dataset ,tabla_in_bq )
+              self.table_id_st = '{}.{}.{}'.format(project, 'STANGING',self.tabla_in_bq )
+              self.table_id = '{}.{}.{}'.format(project, Dataset ,self.tabla_in_bq )
             ##################################
               self.esquema = []
               for i in self.tabla.columns:
