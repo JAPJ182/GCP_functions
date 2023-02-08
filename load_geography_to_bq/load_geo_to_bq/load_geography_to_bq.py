@@ -12,15 +12,13 @@ from google.colab import auth
 auth.authenticate_user()
 
 # change these to try this notebook out
- 
-project = 'ph-jabri'
-Dataset = 'ghg_annual_sector'
+
 # Tabla = 'directions'
 
 import time
 import os
  
-os.environ['PROJECT'] = project
+# os.environ['PROJECT'] = project
 
 # BigQuery API
 from google.cloud import bigquery 
@@ -37,6 +35,29 @@ import zipfile
 import shutil
 
 bq_client = bigquery.Client(project=project)
+storage_client = storage.Client(project=project)
+
+def list_blobs(bucket_name):
+    storage_client = storage.Client()
+    blobs = storage_client.list_blobs(bucket_name)
+    lista = []
+    for blob in blobs:
+        lista.append(blob.name)
+    return lista    
+
+
+class import_gs:
+  def __init__(self, file_in_gs = '', Bucket = ''   ):
+    self.name_in_gs = file_in_gs
+    self.bucket_gs = Bucket
+    
+
+  
+  def move_to_here(self):
+    name_document = "./content/" 
+    command = ('gsutil mv gs://{}/{} .'.format(self.bucket_gs, self.name_in_gs)   ) #+ " "+name_document
+    print(command)
+    os.system(command)
 
 class load_to_bq:
   import zipfile
@@ -71,21 +92,23 @@ class load_to_bq:
       # table = bq_client.get_table(self.table_id_st)
       # Make an API request.
       # print( "Loaded {} rows and {} columns to {}".format( table.num_rows, len(table.schema), self.table_id_st ) )
-
-      query = """ CREATE OR REPLACE TABLE {}
+      if(self.iteracion == (len(self.txt_files) - 1 ) ):
+        query = """ CREATE OR REPLACE TABLE {}
+                  PARTITION BY year
                   OPTIONS () AS 
                   SELECT  SAFE_CAST(lon AS FLOAT64) AS LON,
                           SAFE_CAST(lat AS FLOAT64) AS LAT,
-                        	SAFE_CAST(Emission AS FLOAT64) AS Emission , 	year	, pollutant ,	sector_name,
+                        	SAFE_CAST(Emission AS FLOAT64) AS Emission , 	 parse_date("%Y" ,	year) as year		, pollutant ,	sector_name,
                            ST_GEOGPOINT(SAFE_CAST(lon AS FLOAT64), SAFE_CAST(lat AS FLOAT64)) geography
-                             FROM {} 
-                  """.format(self.table_id, self.table_id_st)
-      job_ = bq_client.query(query)
+                             FROM `{}.STANGING.{}` 
+                  """.format( self.table_id, self.project ,   self.tabla_in_bq+"_*")
+
+        job_ = bq_client.query(query)
       
-      for row in job_.result():
-        print(row)
-      table = bq_client.get_table(self.table_id_st)
-      print( "Loaded from stanginf: {} rows and {} columns to {}".format( table.num_rows, len(table.schema), self.table_id ) )
+        for row in job_.result():
+          print(row)
+        table = bq_client.get_table(self.table_id_st)
+        print( "Loaded from stanginf: {} rows and {} columns to {}".format( table.num_rows, len(table.schema), self.table_id ) )
 
   def get_fiels(self):
       self.Zip_files = glob.glob("/content/*.zip")
@@ -100,8 +123,9 @@ class load_to_bq:
               with zipfile.ZipFile(self.temp_path, 'r') as zip_ref:
                   zip_ref.extractall('/content/temp_dir')
               self.txt_files = glob.glob("/content/temp_dir/*.txt")
-              appended_data = []
+              # appended_data = []
               for i in range(len(self.txt_files) ):
+                self.iteracion = i
                 temp_file_path = self.txt_files[i]
                 year = temp_file_path.split('/')[-1].split('_'+self.sector_name)[0].split('_')[-1] 
                 pollutant = temp_file_path.split('/')[-1].split('_'+self.sector_name)[0].split('_')[-2] 
@@ -111,25 +135,26 @@ class load_to_bq:
                 df['year'] = year
                 df['pollutant'] = pollutant
                 df['sector_name'] = self.sector_name
-                appended_data.append(df)
+                # appended_data.append(df)
                 
-              self.tabla = pd.concat(appended_data)
-              # df = appended_data
-              self.tabla=self.tabla.applymap(str)
-              self.tabla_in_bq = self.sector_name+'_'+pollutant 
-              self.table_id_st = '{}.{}.{}'.format(project, 'STANGING',self.tabla_in_bq )
-              self.table_id = '{}.{}.{}'.format(project, Dataset ,self.tabla_in_bq )
-            ##################################
-              self.esquema = []
-              for i in self.tabla.columns:
-                self.schema_line   =   bigquery.SchemaField("""{}""".format(i), 'STRING' , mode = 'NULLABLE')
-                self.esquema.append(self.schema_line)          
+                self.tabla = df #pd.concat(appended_data)
+                 # df = appended_data
+                self.tabla=self.tabla.applymap(str)
+                self.tabla_in_bq = self.sector_name+'_'+pollutant 
+                self.table_id_st = '{}.{}.{}'.format(project, 'STANGING',self.tabla_in_bq + "_" + year )
+                self.table_id = '{}.{}.{}'.format(project, Dataset ,self.tabla_in_bq )
+                ##################################
+                self.esquema = []
+                for i in self.tabla.columns:
+                  self.schema_line   =   bigquery.SchemaField("""{}""".format(i), 'STRING' , mode = 'NULLABLE')
+                  self.esquema.append(self.schema_line)          
 
-              self.carga = self.load_into_bq()
+                self.carga = self.load_into_bq()
               shutil.rmtree('/content/temp_dir', ignore_errors=False, onerror=None)
              
             return print('Done')        
       elif formato.upper()== "SHP":
+        
           #Queda pendiente leer shapes, tomar https://colab.research.google.com/drive/11d5y2_NM1ftZwQk0f_n3gTHuCjyFDdl3#scrollTo=HDvW11fLV9Ky
           pass
       else:
