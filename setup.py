@@ -8,17 +8,17 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
     requirements = f.read().splitlines()
 setuptools.setup(
-    name='GCP_functions_geography',
+    name='GeoGCP',
     version='0.0.1',
     author='Jaime Polanco',
     author_email='jaime.polanco@javerian.edu.co',
-    py_modules=['GCP_functions_geography'],
+    py_modules=['GeoGCP'],
     description='Load geographic data into GCP', 
     long_description_content_type="text/markdown",
-    url='https://github.com/JAPJ182/GCP_functions_geography',
+    url='https://github.com/JAPJ182/GeoGCP',
     license='MIT',
     install_requires= 	requirements,
-    #packages=find_packages("GCP_functions_geography",  exclude=["*.test", "*.test.*", "test.*", "test"]) ,
-    packages=['GCP_functions_geography'], #,'geopandas', 'geopy', 'geojson'
+    #packages=find_packages("GeoGCP",  exclude=["*.test", "*.test.*", "test.*", "test"]) ,
+    packages=['GeoGCP'], #,'geopandas', 'geopy', 'geojson'
     # install_requires=['requests'],
 )

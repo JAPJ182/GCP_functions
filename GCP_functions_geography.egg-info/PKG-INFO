@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: GCP-functions-geography
+Version: 0.0.1
+Summary: Load geographic data into GCP
+Home-page: https://github.com/JAPJ182/GCP_functions_geography
+Author: Jaime Polanco
+Author-email: jaime.polanco@javerian.edu.co
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN
+Description-Content-Type: text/markdown

@@ -1,0 +1,8 @@
+setup.py
+GeoGCP/GeoGCP.py
+GeoGCP/__init__.py
+GeoGCP.egg-info/PKG-INFO
+GeoGCP.egg-info/SOURCES.txt
+GeoGCP.egg-info/dependency_links.txt
+GeoGCP.egg-info/requires.txt
+GeoGCP.egg-info/top_level.txt
