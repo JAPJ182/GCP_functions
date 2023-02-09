@@ -1,0 +1,23 @@
+
+import setuptools
+
+# with open("README.md", "r", encoding="utf-8") as fh:
+#     long_description = fh.read()
+from os import path
+here = path.abspath(path.dirname(__file__))
+with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
+    requirements = f.read().splitlines()
+setuptools.setup(
+    name='load_geo_to_bq',
+    version='0.0.1',
+    author='Jaime Polanco',
+    author_email='jaime.polanco@javerian.edu.co',
+    py_modules=['load_geography_to_bq'],
+    description='Load geographic data into GCP', 
+    long_description_content_type="text/markdown",
+    url='https://github.com/JAPJ182/GCP_functions/tree/main/load_geography_to_bq/load_geo_to_bq',
+    license='MIT',
+    install_requires= 	requirements,
+    #packages=['geopandas', 'geopy', 'geojson'],
+    # install_requires=['requests'],
+)
