@@ -1,4 +1,4 @@
-
+from setuptools import  find_packages
 import setuptools
 
 # with open("README.md", "r", encoding="utf-8") as fh:
@@ -12,13 +12,13 @@ setuptools.setup(
     version='0.0.1',
     author='Jaime Polanco',
     author_email='jaime.polanco@javerian.edu.co',
-    #py_modules=['GCP_functions_geography'],
+    py_modules=['GCP_functions_geography'],
     description='Load geographic data into GCP', 
     long_description_content_type="text/markdown",
     url='https://github.com/JAPJ182/GCP_functions_geography',
     license='MIT',
     install_requires= 	requirements,
-    packages=find_packages("GCP_functions_geography", exclude=["*.test", "*.test.*", "test.*", "test"]) ,
+    packages=find_packages(  exclude=["*.test", "*.test.*", "test.*", "test"]) ,
     #packages=['geopandas', 'geopy', 'geojson'],
     # install_requires=['requests'],
 )
