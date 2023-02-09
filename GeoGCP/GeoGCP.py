@@ -1,3 +1,5 @@
+__version__ = 'dev'
+
 import warnings
 warnings.simplefilter("ignore")
 
