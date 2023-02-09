@@ -8,7 +8,7 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
     requirements = f.read().splitlines()
 setuptools.setup(
-    name='load_geo_to_bq',
+    name='GCP_functions_geography',
     version='0.0.1',
     author='Jaime Polanco',
     author_email='jaime.polanco@javerian.edu.co',
