@@ -1,10 +1,5 @@
-#%%writefile load_geography_to_bq.py
 import warnings
 warnings.simplefilter("ignore")
-#!pip install  pyproj
-#!pip install progress
-#!pip install geojson
-#!pip install geopandas
 
 
 from google.colab import auth
