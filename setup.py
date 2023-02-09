@@ -19,6 +19,6 @@ setuptools.setup(
     license='MIT',
     install_requires= 	requirements,
     packages=find_packages("GCP_functions_geography",  exclude=["*.test", "*.test.*", "test.*", "test"]) ,
-    #packages=['geopandas', 'geopy', 'geojson'],
+    packages=['GCP_functions_geography'], #,'geopandas', 'geopy', 'geojson'
     # install_requires=['requests'],
 )
