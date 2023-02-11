@@ -4,9 +4,9 @@ import warnings
 warnings.simplefilter("ignore")
 
 
-from google.colab import auth
+#from google.colab import auth
 
-auth.authenticate_user()
+#auth.authenticate_user()
 
 # change these to try this notebook out
 
@@ -238,7 +238,7 @@ class load_to_bq:
             self.txt_files = glob.glob("/content/*.shp")
 
           #Queda pendiente leer shapes, tomar https://colab.research.google.com/drive/11d5y2_NM1ftZwQk0f_n3gTHuCjyFDdl3#scrollTo=HDvW11fLV9Ky
-          for i in txt_files:
+          for i in self.txt_files:
             if(len(glob.glob("/content/*.dbf"))>= 1):
               NOMBRE_ = i.split('/')[-1].split('.')[0]
 
