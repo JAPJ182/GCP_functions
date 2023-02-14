@@ -186,42 +186,37 @@ class load_to_bq:
                 for i in self.txt_files:
                   NOMBRE_ = i.split('/')[-1].split('.')[0]
                   
-                  self.table_id_st = """  `{}.STANGING.{}` """.format(self.project, NOMBRE_)
-                  self.table_id  = """ `{}.{}.{}` """.format(self.project, self.Dataset, NOMBRE_)
+                  self.table_id_st = """`{}.STANGING.{}`""".format(self.project, NOMBRE_)
+                  self.table_id  = """`{}.{}.{}`""".format(self.project, self.Dataset, NOMBRE_)
                   shp_file = geopandas.read_file( i )
                   shp_file = shp_file.to_crs(4326)
                   shp_file['centroid']  = shp_file.centroid
                   shp_file=shp_file.applymap(str )
-                  schema_ = []
-                  
-                  for j in shp_file.columns:
-                    if j.upper() == 'GEOMETRY':
-                      self.VAR_ = j
-                    else:
-                      pass
+                  schema_ = []   
 
+                  for j in shp_file.columns:
                     schema_line   =   bigquery.SchemaField("""{}""".format(j), 'STRING' , mode = 'NULLABLE')
                     print(schema_line)
                     schema_.append(schema_line)
 
                   job_config = bigquery.LoadJobConfig(  schema = schema_, write_disposition="WRITE_TRUNCATE", )
-                  
-                  job = bq_client.load_table_from_dataframe( shp_file, table_id.format(NOMBRE_), job_config=job_config )  # Make an API request.
+                  stan_table = self.table_id_st.replace('`','').replace(' ','')
+                  job = bq_client.load_table_from_dataframe( shp_file, stan_table , job_config=job_config )  # Make an API request.
                   job.result()
                 
-                  # if self.VAR_ in locals():
-                  query = """ CREATE OR REPLACE TABLE {}
+                  if 'GEOMETRY' in [x.upper() for x in shp_file.columns ]:
+                    query = """ CREATE OR REPLACE TABLE {}
                                         OPTIONS () AS 
                                         SELECT  * except(GEOMETRY, centroid) , 
                                         safe.st_geogfromtext(geometry) GEOMETRY,
                                         safe.st_geogfromtext(centroid) CENTROID,
                                                   FROM {}
                                         """.format( self.table_id , self.table_id_st  )
-                  # else:
-                  #   query = """ CREATE OR REPLACE TABLE {}
-                  #                 OPTIONS () AS 
-                  #                 SELECT  *  FROM {}
-                  #                 """.format( self.table_id , self.table_id_st  )
+                  else:
+                    query = """ CREATE OR REPLACE TABLE {}
+                                  OPTIONS () AS 
+                                  SELECT  *  FROM {}
+                                  """.format( self.table_id , self.table_id_st  )
 
                   job_ = bq_client.query(query)
                   for row in job_.result():
@@ -242,8 +237,8 @@ class load_to_bq:
             if(len(glob.glob("/content/*.dbf"))>= 1):
               NOMBRE_ = i.split('/')[-1].split('.')[0]
 
-              self.table_id_st = """  `{}.STANGING.{}` """.format(self.project, NOMBRE_)
-              self.table_id  = """ `{}.{}.{}` """.format(self.project, self.Dataset, NOMBRE_)
+              self.table_id_st = """`{}.STANGING.{}` """.format(self.project, NOMBRE_)
+              self.table_id  = """`{}.{}.{}`""".format(self.project, self.Dataset, NOMBRE_)
               
               shp_file = geopandas.read_file( i )
               shp_file = shp_file.to_crs(4326)
@@ -252,33 +247,29 @@ class load_to_bq:
               schema_ = []
               print(NOMBRE_)
               for j in shp_file.columns:
-    
-                if j.upper()== 'GEOMETRY':
-                  self.VAR_ = j
-                else:
-                  pass
                 schema_line   =   bigquery.SchemaField("""{}""".format(j), 'STRING' , mode = 'NULLABLE')
                 # print(schema_line)
                 schema_.append(schema_line)
 
               job_config = bigquery.LoadJobConfig(  schema = schema_, write_disposition="WRITE_TRUNCATE", )
-              
-              job = bq_client.load_table_from_dataframe( shp_file, table_id.format(NOMBRE_), job_config=job_config )  # Make an API request.
+       
+              stan_table = self.table_id_st.replace('`','').replace(' ','')
+              job = bq_client.load_table_from_dataframe( shp_file,  stan_table , job_config=job_config )  # Make an API request.
               job.result()
             
-              # if self.VAR_ in locals():
-              query = """ CREATE OR REPLACE TABLE {}
+              if 'GEOMETRY' in [x.upper() for x in shp_file.columns ]:
+                query = """ CREATE OR REPLACE TABLE {}
                               OPTIONS () AS 
                               SELECT  * except(GEOMETRY, centroid) , 
                               safe.st_geogfromtext(geometry) GEOMETRY,
                               safe.st_geogfromtext(centroid) CENTROID,
                                         FROM {}
                               """.format( self.table_id , self.table_id_st  )
-              # else:
-              #   query = """ CREATE OR REPLACE TABLE {}
-              #                   OPTIONS () AS 
-              #                   SELECT  *  FROM {}
-              #                   """.format( self.table_id , self.table_id_st  )
+              else:
+                query = """ CREATE OR REPLACE TABLE {}
+                                OPTIONS () AS 
+                                SELECT  *  FROM {}
+                                """.format( self.table_id , self.table_id_st  )
 
               job_ = bq_client.query(query)
               for row in job_.result():
